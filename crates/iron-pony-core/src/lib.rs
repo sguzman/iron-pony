@@ -5,8 +5,10 @@ mod pony;
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 
+use rand::rngs::StdRng;
+use rand::{RngExt, SeedableRng};
 use thiserror::Error;
-use tracing::{debug, info};
+use tracing::{debug, info, trace};
 
 pub use balloon::{BalloonMode, BalloonStyle};
 pub use fortune::FortuneConfig;
@@ -53,7 +55,7 @@ impl Default for RenderConfig {
     fn default() -> Self {
         Self {
             message: String::new(),
-            pony: "default".to_string(),
+            pony: String::new(),
             pony_paths: default_pony_paths(),
             balloon: None,
             balloon_paths: default_balloon_paths(),
@@ -101,6 +103,38 @@ pub fn list_balloons(balloon_paths: &[PathBuf]) -> Vec<String> {
     names.into_iter().collect()
 }
 
+pub fn select_pony(
+    requested: Option<&str>,
+    pony_paths: &[PathBuf],
+    seed: Option<u64>,
+) -> Result<String, PonyError> {
+    if let Some(name) = requested {
+        return Ok(name.to_string());
+    }
+
+    if let Some(best_path) = find_best_pony(pony_paths) {
+        info!(path = %best_path.display(), "auto-selected best.pony");
+        return Ok(best_path.to_string_lossy().to_string());
+    }
+
+    let names = list_ponies(pony_paths);
+    if names.is_empty() {
+        return Err(PonyError::PonyNotFound {
+            name: "<auto>".to_string(),
+        });
+    }
+
+    let mut rng = seeded_rng(seed);
+    let index = rng.random_range(0..names.len());
+    let selected = names[index].clone();
+    info!(
+        pony = %selected,
+        choices = names.len(),
+        "auto-selected random installed pony"
+    );
+    Ok(selected)
+}
+
 pub fn pick_fortune(config: &FortuneConfig) -> Result<String, PonyError> {
     fortune::pick_fortune(config).map_err(|error| PonyError::Fortune(error.to_string()))
 }
@@ -110,15 +144,22 @@ pub fn render(config: &RenderConfig) -> Result<String, PonyError> {
         return Err(PonyError::NoMessage);
     }
 
+    let requested_pony = if config.pony.trim().is_empty() {
+        None
+    } else {
+        Some(config.pony.as_str())
+    };
+    let pony_name = select_pony(requested_pony, &config.pony_paths, None)?;
+
     info!(
-        pony = %config.pony,
+        pony = %pony_name,
         balloon = config.balloon.as_deref().unwrap_or("<default>"),
         width = config.wrap_width,
         mode = ?config.mode,
         "rendering ponysay output"
     );
 
-    let pony = pony::load_pony(&config.pony, &config.pony_paths)?;
+    let pony = pony::load_pony(&pony_name, &config.pony_paths)?;
     let mode = match config.mode {
         Mode::Say => BalloonMode::Say,
         Mode::Think => BalloonMode::Think,
@@ -137,6 +178,30 @@ pub fn render(config: &RenderConfig) -> Result<String, PonyError> {
     let bubble = balloon::render_balloon(&config.message, config.wrap_width, &style);
     let rendered = pony::insert_balloon(&pony.body, &bubble, &style);
     Ok(format!("\u{1b}[0m{rendered}"))
+}
+
+fn find_best_pony(pony_paths: &[PathBuf]) -> Option<PathBuf> {
+    for root in pony_paths {
+        let candidate = root.join("best.pony");
+        if !candidate.is_file() {
+            trace!(path = %candidate.display(), "best.pony candidate not present");
+            continue;
+        }
+
+        let resolved = std::fs::canonicalize(&candidate).unwrap_or(candidate);
+        return Some(resolved);
+    }
+    None
+}
+
+fn seeded_rng(seed: Option<u64>) -> StdRng {
+    match seed {
+        Some(value) => StdRng::seed_from_u64(value),
+        None => {
+            let mut entropy = rand::rng();
+            StdRng::from_rng(&mut entropy)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -165,5 +230,31 @@ mod tests {
         let out = render(&config).expect("rendered");
         assert!(out.contains("hello world"));
         assert!(out.contains("\\"));
+    }
+
+    #[test]
+    fn select_pony_prefers_best_pony() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let pony_dir = tmp.path().join("ponies");
+        fs::create_dir_all(&pony_dir).expect("pony dir");
+        fs::write(pony_dir.join("best.pony"), "$$$\n$$$\nbest\n").expect("write best");
+        fs::write(pony_dir.join("other.pony"), "$$$\n$$$\nother\n").expect("write other");
+
+        let selected = select_pony(None, &[pony_dir], Some(7)).expect("selected pony");
+        assert!(selected.ends_with("best.pony"));
+    }
+
+    #[test]
+    fn select_pony_random_is_seeded() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let pony_dir = tmp.path().join("ponies");
+        fs::create_dir_all(&pony_dir).expect("pony dir");
+        fs::write(pony_dir.join("alpha.pony"), "$$$\n$$$\na\n").expect("write alpha");
+        fs::write(pony_dir.join("beta.pony"), "$$$\n$$$\nb\n").expect("write beta");
+
+        let first = select_pony(None, &[pony_dir.clone()], Some(42)).expect("first");
+        let second = select_pony(None, &[pony_dir], Some(42)).expect("second");
+        assert_eq!(first, second);
+        assert!(first == "alpha" || first == "beta");
     }
 }

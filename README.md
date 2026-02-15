@@ -17,7 +17,7 @@ This repository implements a modular workspace with:
 - `crates/xtask`: automation commands (`xtask parity`)
 - `spec/requirements.yaml`: weighted requirement definitions
 - `tests/parity_cases/*.json`: parity case corpus
-- `testdata/`: local pony/balloon/fortune fixtures
+- `testdata/`: local fortune fixture data
 
 ## Current Scope
 
@@ -41,6 +41,10 @@ cargo test --workspace
 ```bash
 cargo run -p iron-pony-cli -- -f twilight -b say "Hello from Iron Pony"
 ```
+
+When `-f/--pony` is omitted, `iron-pony` follows upstream selection flow:
+- use `best.pony` if present in configured pony paths
+- otherwise pick a random installed pony
 
 Think mode:
 

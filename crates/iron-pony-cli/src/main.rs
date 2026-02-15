@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use clap::Parser;
 use iron_pony_core::{
     FortuneConfig, Mode, RenderConfig, default_balloon_paths, default_pony_paths, list_ponies,
-    pick_fortune, render,
+    pick_fortune, render, select_pony,
 };
 use tracing::{debug, error, info, warn};
 use tracing_subscriber::EnvFilter;
@@ -17,13 +17,8 @@ use tracing_subscriber::EnvFilter;
     about = "Rust port baseline for ponysay with parity harness support"
 )]
 struct Cli {
-    #[arg(
-        short = 'f',
-        long = "pony",
-        default_value = "default",
-        help = "Pony template name"
-    )]
-    pony: String,
+    #[arg(short = 'f', long = "pony", help = "Pony template name or path")]
+    pony: Option<String>,
 
     #[arg(short = 'b', long = "balloon", help = "Balloon style name")]
     balloon: Option<String>,
@@ -115,9 +110,18 @@ fn main() -> ExitCode {
         }
     };
 
+    let pony = match select_pony(cli.pony.as_deref(), &pony_paths, cli.seed) {
+        Ok(pony) => pony,
+        Err(error) => {
+            error!(%error, "failed to resolve pony");
+            eprintln!("iron-pony: {error}");
+            return ExitCode::from(1);
+        }
+    };
+
     let config = RenderConfig {
         message,
-        pony: cli.pony,
+        pony,
         pony_paths,
         balloon: cli.balloon,
         balloon_paths,
