@@ -65,15 +65,17 @@ impl Default for RenderConfig {
 
 pub fn default_pony_paths() -> Vec<PathBuf> {
     vec![
-        PathBuf::from("testdata/ponies"),
         PathBuf::from("/usr/share/ponysay/ponies"),
+        PathBuf::from("/usr/share/ponysay/extraponies"),
+        PathBuf::from("/usr/share/ponysay/ttyponies"),
         PathBuf::from("/usr/local/share/ponysay/ponies"),
+        PathBuf::from("/usr/local/share/ponysay/extraponies"),
+        PathBuf::from("/usr/local/share/ponysay/ttyponies"),
     ]
 }
 
 pub fn default_balloon_paths() -> Vec<PathBuf> {
     vec![
-        PathBuf::from("testdata/balloons"),
         PathBuf::from("/usr/share/ponysay/balloons"),
         PathBuf::from("/usr/local/share/ponysay/balloons"),
     ]
@@ -133,23 +135,32 @@ pub fn render(config: &RenderConfig) -> Result<String, PonyError> {
     debug!(pony_path = %pony.path.display(), "loaded pony template");
 
     let bubble = balloon::render_balloon(&config.message, config.wrap_width, &style);
-    let rendered = pony::insert_balloon(&pony.body, &bubble);
+    let rendered = pony::insert_balloon(&pony.body, &bubble, &style);
     Ok(format!("\u{1b}[0m{rendered}"))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
 
     #[test]
     fn render_inserts_balloon() {
         let mut config = RenderConfig::default();
         config.message = "hello world".to_string();
-        let testdata_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../testdata");
-        config.pony = "simple_say".to_string();
-        config.balloon = Some("ascii".to_string());
-        config.pony_paths = vec![testdata_root.join("ponies")];
-        config.balloon_paths = vec![testdata_root.join("balloons")];
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let pony_dir = tmp.path().join("ponies");
+        fs::create_dir_all(&pony_dir).expect("pony dir");
+        fs::write(
+            pony_dir.join("default.pony"),
+            "$$$\nNAME: Test Pony\n$$$\n$balloon$\n  \\\n   pony\n",
+        )
+        .expect("write pony");
+
+        config.pony = "default".to_string();
+        config.balloon = None;
+        config.pony_paths = vec![pony_dir];
+        config.balloon_paths = vec![];
 
         let out = render(&config).expect("rendered");
         assert!(out.contains("hello world"));

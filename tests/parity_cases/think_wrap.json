@@ -6,16 +6,16 @@
   "reference_argv": [
     "ponythink",
     "-W", "18",
-    "-f", "{workspace}/testdata/ponies/simple_think.pony",
-    "-b", "{workspace}/testdata/balloons/ascii.think",
+    "-f", "pinacolada",
+    "-b", "ascii",
     "Thinking in Rust"
   ],
   "candidate_argv": [
     "iron-pony",
     "--think",
     "--wrap", "18",
-    "-f", "{workspace}/testdata/ponies/simple_think.pony",
-    "-b", "{workspace}/testdata/balloons/ascii.think",
+    "-f", "pinacolada",
+    "-b", "ascii",
     "Thinking in Rust"
   ],
   "stdin": null,

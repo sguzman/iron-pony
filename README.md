@@ -80,11 +80,7 @@ Environment overrides:
 - `PONYSAY_REF`: reference program (default: `ponysay`)
 - `IRON_PONY_BIN`: candidate binary path (otherwise harness uses `cargo run -p iron-pony-cli`)
 
-Deterministic fixture set used by current parity cases:
-- `testdata/ponies/simple_say.pony`
-- `testdata/ponies/simple_think.pony`
-- `testdata/balloons/ascii.say`
-- `testdata/balloons/ascii.think`
+Current parity cases target installed system assets (for example `pinacolada` + `ascii`) so discovery paths are exercised directly.
 
 Outputs:
 - `target/parity/parity-report.json`

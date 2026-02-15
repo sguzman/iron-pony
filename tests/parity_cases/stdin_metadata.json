@@ -4,13 +4,13 @@
   "argv": ["ponysay"],
   "reference_argv": [
     "ponysay",
-    "-f", "{workspace}/testdata/ponies/simple_say.pony",
-    "-b", "{workspace}/testdata/balloons/ascii.say"
+    "-f", "pinacolada",
+    "-b", "ascii"
   ],
   "candidate_argv": [
     "iron-pony",
-    "-f", "{workspace}/testdata/ponies/simple_say.pony",
-    "-b", "{workspace}/testdata/balloons/ascii.say"
+    "-f", "pinacolada",
+    "-b", "ascii"
   ],
   "stdin": "Metadata path from stdin",
   "env": {
