@@ -1,0 +1,20 @@
+{
+  "id": "stdin_metadata",
+  "features": ["metadata", "mode_say", "anchor", "diff_runner"],
+  "argv": ["ponysay"],
+  "reference_argv": [
+    "ponysay",
+    "-f", "twilight",
+    "-b", "say"
+  ],
+  "candidate_argv": [
+    "iron-pony",
+    "-f", "twilight",
+    "-b", "say"
+  ],
+  "stdin": "Metadata path from stdin",
+  "env": {
+    "COLUMNS": "80",
+    "LINES": "24"
+  }
+}

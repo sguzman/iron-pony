@@ -1,0 +1,16 @@
+[package]
+name = "iron-pony-core"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+rand.workspace = true
+regex.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+unicode-width = "0.2"
+walkdir.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

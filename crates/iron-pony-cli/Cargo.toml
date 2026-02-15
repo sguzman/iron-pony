@@ -1,0 +1,16 @@
+[package]
+name = "iron-pony-cli"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[[bin]]
+name = "iron-pony"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+iron-pony-core = { path = "../iron-pony-core" }
+tracing.workspace = true
+tracing-subscriber.workspace = true

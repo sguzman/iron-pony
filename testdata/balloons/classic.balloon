@@ -1,0 +1,16 @@
+# key=value style
+# defaults mostly mirror ponysay-like style
+
+top_left=/
+top_right=\\
+bottom_left=\\
+bottom_right=/
+horizontal=-
+first_left=/
+first_right=\\
+middle_left=|
+middle_right=|
+last_left=\\
+last_right=/
+think_left=(
+think_right=)

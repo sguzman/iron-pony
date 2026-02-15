@@ -1,0 +1,22 @@
+{
+  "id": "say_basic",
+  "features": ["mode_say", "pony_select", "balloon_select", "wrap", "anchor", "diff_runner"],
+  "argv": ["ponysay"],
+  "reference_argv": [
+    "ponysay",
+    "-f", "twilight",
+    "-b", "say",
+    "Hello from iron pony"
+  ],
+  "candidate_argv": [
+    "iron-pony",
+    "-f", "twilight",
+    "-b", "say",
+    "Hello from iron pony"
+  ],
+  "stdin": null,
+  "env": {
+    "COLUMNS": "80",
+    "LINES": "24"
+  }
+}

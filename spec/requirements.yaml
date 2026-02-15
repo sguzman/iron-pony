@@ -1,0 +1,48 @@
+requirements:
+  - id: cli.mode.say
+    description: Default speech mode rendering.
+    weight: 1.0
+  - id: cli.mode.think
+    description: Think mode rendering via --think.
+    weight: 1.0
+  - id: cli.flag.pony
+    description: Pony selection via --pony/-f.
+    weight: 1.0
+  - id: cli.flag.balloon
+    description: Balloon style selection via --balloon/-b.
+    weight: 1.0
+  - id: render.wrap.algorithm
+    description: Message wrapping to configured width.
+    weight: 2.0
+  - id: render.anchor.balloon
+    description: Balloon insertion into pony template anchor.
+    weight: 2.0
+  - id: pony.metadata.parse
+    description: $$$ metadata header parsing.
+    weight: 1.0
+  - id: fortune.internal.mode
+    description: Internal --fortune mode for single-process startup.
+    weight: 1.5
+  - id: parity.harness.execution
+    description: Differential execution against upstream ponysay.
+    weight: 1.5
+
+feature_map:
+  mode_say:
+    - cli.mode.say
+  mode_think:
+    - cli.mode.think
+  pony_select:
+    - cli.flag.pony
+  balloon_select:
+    - cli.flag.balloon
+  wrap:
+    - render.wrap.algorithm
+  anchor:
+    - render.anchor.balloon
+  metadata:
+    - pony.metadata.parse
+  internal_fortune:
+    - fortune.internal.mode
+  diff_runner:
+    - parity.harness.execution

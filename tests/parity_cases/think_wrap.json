@@ -1,0 +1,26 @@
+{
+  "id": "think_wrap",
+  "features": ["mode_think", "wrap", "anchor", "diff_runner"],
+  "argv": ["ponythink"],
+  "reference_program": "ponythink",
+  "reference_argv": [
+    "ponythink",
+    "-W", "18",
+    "-f", "twilight",
+    "-b", "say",
+    "This message should wrap across several lines"
+  ],
+  "candidate_argv": [
+    "iron-pony",
+    "--think",
+    "--wrap", "18",
+    "-f", "twilight",
+    "-b", "say",
+    "This message should wrap across several lines"
+  ],
+  "stdin": null,
+  "env": {
+    "COLUMNS": "80",
+    "LINES": "24"
+  }
+}

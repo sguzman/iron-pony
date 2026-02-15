@@ -1,6 +1,27 @@
-[package]
-name = "iron-pony"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [
+  "crates/iron-pony-core",
+  "crates/iron-pony-cli",
+  "crates/iron-pony-spec",
+  "crates/iron-pony-parity",
+  "crates/xtask",
+]
+resolver = "2"
 
-[dependencies]
+[workspace.package]
+edition = "2024"
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+rand = "0.10"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+walkdir = "2"
+tempfile = "3"

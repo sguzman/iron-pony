@@ -1,0 +1,13 @@
+[package]
+name = "iron-pony-parity"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+anyhow.workspace = true
+iron-pony-spec = { path = "../iron-pony-spec" }
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tempfile.workspace = true
