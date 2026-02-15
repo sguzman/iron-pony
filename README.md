@@ -62,15 +62,12 @@ cargo run -p iron-pony-cli -- --fortune --fortune-all --fortune-equal --seed 7
 
 Logging is built with `tracing` + `tracing-subscriber` across CLI/core/parity tooling.
 
-Default filter:
+Logging is off by default.
+Use `--verbose` to enable logs.
+
+When `--verbose` is set, default filter is:
 - `info` globally
-- `debug` for `iron_pony_core`, `iron_pony_parity`, and `xtask`
-
-Override with `RUST_LOG`:
-
-```bash
-RUST_LOG=debug cargo run -p iron-pony-cli -- -f twilight "trace me"
-```
+- `debug` for `iron_pony_core`, `iron_pony_cli`, `iron_pony_parity`, and `xtask`
 
 ## Parity Harness
 

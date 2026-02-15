@@ -26,6 +26,9 @@ struct Cli {
     #[arg(long = "think", help = "Render using think mode")]
     think: bool,
 
+    #[arg(long = "verbose", help = "Enable tracing logs")]
+    verbose: bool,
+
     #[arg(long = "wrap", default_value_t = 40, help = "Balloon wrap width")]
     wrap: usize,
 
@@ -76,9 +79,8 @@ struct Cli {
 }
 
 fn main() -> ExitCode {
-    init_tracing();
-
     let cli = Cli::parse();
+    init_tracing(cli.verbose);
     debug!(?cli, "parsed CLI options");
 
     let pony_paths = if cli.pony_paths.is_empty() {
@@ -194,17 +196,20 @@ fn env_paths(var: &str) -> Option<Vec<PathBuf>> {
     if paths.is_empty() { None } else { Some(paths) }
 }
 
-fn init_tracing() {
-    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-        EnvFilter::new(
-            "info,iron_pony_core=debug,iron_pony_cli=debug,iron_pony_parity=debug,xtask=debug",
-        )
-    });
+fn init_tracing(verbose: bool) {
+    if !verbose {
+        return;
+    }
+
+    let filter = EnvFilter::new(
+        "info,iron_pony_core=debug,iron_pony_cli=debug,iron_pony_parity=debug,xtask=debug",
+    );
 
     tracing_subscriber::fmt()
         .with_env_filter(filter)
         .with_target(true)
         .with_thread_ids(false)
         .with_ansi(true)
+        .with_writer(std::io::stderr)
         .init();
 }
