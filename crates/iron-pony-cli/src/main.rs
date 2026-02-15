@@ -25,13 +25,8 @@ struct Cli {
     )]
     pony: String,
 
-    #[arg(
-        short = 'b',
-        long = "balloon",
-        default_value = "classic",
-        help = "Balloon style name"
-    )]
-    balloon: String,
+    #[arg(short = 'b', long = "balloon", help = "Balloon style name")]
+    balloon: Option<String>,
 
     #[arg(long = "think", help = "Render using think mode")]
     think: bool,

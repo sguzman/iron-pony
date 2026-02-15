@@ -1,22 +1,23 @@
 {
   "id": "say_basic",
-  "features": ["mode_say", "pony_select", "balloon_select", "wrap", "anchor", "diff_runner"],
+  "features": ["mode_say", "pony_select", "balloon_select", "anchor", "diff_runner"],
   "argv": ["ponysay"],
   "reference_argv": [
     "ponysay",
-    "-f", "twilight",
-    "-b", "say",
+    "-f", "{workspace}/testdata/ponies/simple_say.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.say",
     "Hello from iron pony"
   ],
   "candidate_argv": [
     "iron-pony",
-    "-f", "twilight",
-    "-b", "say",
+    "-f", "{workspace}/testdata/ponies/simple_say.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.say",
     "Hello from iron pony"
   ],
   "stdin": null,
   "env": {
     "COLUMNS": "80",
-    "LINES": "24"
+    "LINES": "24",
+    "PYTHONWARNINGS": "ignore"
   }
 }

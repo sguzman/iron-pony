@@ -4,17 +4,18 @@
   "argv": ["ponysay"],
   "reference_argv": [
     "ponysay",
-    "-f", "twilight",
-    "-b", "say"
+    "-f", "{workspace}/testdata/ponies/simple_say.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.say"
   ],
   "candidate_argv": [
     "iron-pony",
-    "-f", "twilight",
-    "-b", "say"
+    "-f", "{workspace}/testdata/ponies/simple_say.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.say"
   ],
   "stdin": "Metadata path from stdin",
   "env": {
     "COLUMNS": "80",
-    "LINES": "24"
+    "LINES": "24",
+    "PYTHONWARNINGS": "ignore"
   }
 }

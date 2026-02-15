@@ -43,7 +43,7 @@ pub struct RenderConfig {
     pub message: String,
     pub pony: String,
     pub pony_paths: Vec<PathBuf>,
-    pub balloon: String,
+    pub balloon: Option<String>,
     pub balloon_paths: Vec<PathBuf>,
     pub mode: Mode,
     pub wrap_width: usize,
@@ -55,7 +55,7 @@ impl Default for RenderConfig {
             message: String::new(),
             pony: "default".to_string(),
             pony_paths: default_pony_paths(),
-            balloon: "classic".to_string(),
+            balloon: None,
             balloon_paths: default_balloon_paths(),
             mode: Mode::Say,
             wrap_width: 40,
@@ -108,25 +108,33 @@ pub fn render(config: &RenderConfig) -> Result<String, PonyError> {
         return Err(PonyError::NoMessage);
     }
 
-    info!(pony = %config.pony, balloon = %config.balloon, width = config.wrap_width, mode = ?config.mode, "rendering ponysay output");
+    info!(
+        pony = %config.pony,
+        balloon = config.balloon.as_deref().unwrap_or("<default>"),
+        width = config.wrap_width,
+        mode = ?config.mode,
+        "rendering ponysay output"
+    );
 
     let pony = pony::load_pony(&config.pony, &config.pony_paths)?;
-    let style = balloon::load_style(&config.balloon, &config.balloon_paths).ok_or_else(|| {
-        PonyError::BalloonNotFound {
-            name: config.balloon.clone(),
-        }
-    })?;
-
-    debug!(pony_path = %pony.path.display(), "loaded pony template");
-
     let mode = match config.mode {
         Mode::Say => BalloonMode::Say,
         Mode::Think => BalloonMode::Think,
     };
 
-    let bubble = balloon::render_balloon(&config.message, config.wrap_width, mode, &style);
+    let style = balloon::load_style(config.balloon.as_deref(), &config.balloon_paths, mode)
+        .ok_or_else(|| PonyError::BalloonNotFound {
+            name: config
+                .balloon
+                .clone()
+                .unwrap_or_else(|| "<default>".to_string()),
+        })?;
+
+    debug!(pony_path = %pony.path.display(), "loaded pony template");
+
+    let bubble = balloon::render_balloon(&config.message, config.wrap_width, &style);
     let rendered = pony::insert_balloon(&pony.body, &bubble);
-    Ok(rendered)
+    Ok(format!("\u{1b}[0m{rendered}"))
 }
 
 #[cfg(test)]
@@ -138,6 +146,8 @@ mod tests {
         let mut config = RenderConfig::default();
         config.message = "hello world".to_string();
         let testdata_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../testdata");
+        config.pony = "simple_say".to_string();
+        config.balloon = Some("ascii".to_string());
         config.pony_paths = vec![testdata_root.join("ponies")];
         config.balloon_paths = vec![testdata_root.join("balloons")];
 

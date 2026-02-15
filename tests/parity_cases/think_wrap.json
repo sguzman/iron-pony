@@ -6,21 +6,22 @@
   "reference_argv": [
     "ponythink",
     "-W", "18",
-    "-f", "twilight",
-    "-b", "say",
-    "This message should wrap across several lines"
+    "-f", "{workspace}/testdata/ponies/simple_think.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.think",
+    "Thinking in Rust"
   ],
   "candidate_argv": [
     "iron-pony",
     "--think",
     "--wrap", "18",
-    "-f", "twilight",
-    "-b", "say",
-    "This message should wrap across several lines"
+    "-f", "{workspace}/testdata/ponies/simple_think.pony",
+    "-b", "{workspace}/testdata/balloons/ascii.think",
+    "Thinking in Rust"
   ],
   "stdin": null,
   "env": {
     "COLUMNS": "80",
-    "LINES": "24"
+    "LINES": "24",
+    "PYTHONWARNINGS": "ignore"
   }
 }

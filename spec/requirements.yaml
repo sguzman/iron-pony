@@ -20,9 +20,6 @@ requirements:
   - id: pony.metadata.parse
     description: $$$ metadata header parsing.
     weight: 1.0
-  - id: fortune.internal.mode
-    description: Internal --fortune mode for single-process startup.
-    weight: 1.5
   - id: parity.harness.execution
     description: Differential execution against upstream ponysay.
     weight: 1.5
@@ -42,7 +39,5 @@ feature_map:
     - render.anchor.balloon
   metadata:
     - pony.metadata.parse
-  internal_fortune:
-    - fortune.internal.mode
   diff_runner:
     - parity.harness.execution

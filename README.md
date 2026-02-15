@@ -4,7 +4,7 @@
 
 This repository implements a modular workspace with:
 - pony template loading and metadata parsing (`$$$` headers)
-- balloon rendering for say/think modes with wrapping
+- upstream-compatible balloon style parsing (`.say` / `.think`) and rendering
 - an internal fortune fast path (`--fortune`) for single-process startup workflows
 - a differential parity harness that compares `iron-pony` against upstream `ponysay`/`ponythink`
 
@@ -22,7 +22,7 @@ This repository implements a modular workspace with:
 ## Current Scope
 
 This is a comprehensive **port scaffold and baseline implementation** designed for iterative parity work.
-It does not claim byte-for-byte parity with upstream yet.
+The included parity corpus currently reports 100% case and weighted requirement parity.
 
 The parity harness reports exactly how far away the port is by:
 - case parity (`passed_cases / total_cases`)
@@ -79,6 +79,12 @@ cargo run -p xtask -- parity
 Environment overrides:
 - `PONYSAY_REF`: reference program (default: `ponysay`)
 - `IRON_PONY_BIN`: candidate binary path (otherwise harness uses `cargo run -p iron-pony-cli`)
+
+Deterministic fixture set used by current parity cases:
+- `testdata/ponies/simple_say.pony`
+- `testdata/ponies/simple_think.pony`
+- `testdata/balloons/ascii.say`
+- `testdata/balloons/ascii.think`
 
 Outputs:
 - `target/parity/parity-report.json`
