@@ -1,108 +1,58 @@
 # Iron Pony
 
-`iron-pony` is a Rust port baseline for `ponysay` focused on deterministic behavior, extensive tracing, and parity-driven development.
+`iron-pony` is a Rust port baseline for `ponysay`, built around deterministic behavior, tracing, and parity-driven development.
 
-This repository implements a modular workspace with:
-- pony template loading and metadata parsing (`$$$` headers)
-- upstream-compatible balloon style parsing (`.say` / `.think`) and rendering
-- an internal fortune fast path (`--fortune`) for single-process startup workflows
-- a differential parity harness that compares `iron-pony` against upstream `ponysay`/`ponythink`
+## Intent
 
-## Workspace Layout
+Recreate the upstream experience in Rust while improving internal structure, safety, and testability.
 
-- `crates/iron-pony-core`: pony/balloon/fortune core logic
-- `crates/iron-pony-cli`: `iron-pony` binary and CLI plumbing
-- `crates/iron-pony-spec`: parity requirement/spec loading
-- `crates/iron-pony-parity`: differential runner + report generation
-- `crates/xtask`: automation commands (`xtask parity`)
-- `spec/requirements.yaml`: weighted requirement definitions
-- `tests/parity_cases/*.json`: parity case corpus
-- `testdata/`: local fortune fixture data
+## Ambition
 
-## Current Scope
+The parity harness, spec crate, and workspace split indicate a deliberate ambition to become a trustworthy upstream-compatible implementation rather than just a themed text renderer.
 
-This is a comprehensive **port scaffold and baseline implementation** designed for iterative parity work.
-The included parity corpus currently reports 100% case and weighted requirement parity.
+## Current Status
 
-The parity harness reports exactly how far away the port is by:
-- case parity (`passed_cases / total_cases`)
-- weighted requirement parity
-- per-requirement status (`done`, `failing`, `untested`)
+The workspace already contains core logic, CLI, spec, parity tooling, tests, and test data. It appears well underway as a compatibility-focused port.
 
-## Build and Test
+## Core Capabilities Or Focus Areas
+
+- Rust port of the core `ponysay` behavior.
+- Dedicated crates for core logic, CLI, spec modeling, parity checks, and workspace tooling.
+- Tracing and deterministic behavior for debugging and testing.
+- Parity-oriented validation against upstream behavior.
+- Test data and fixtures for compatibility work.
+
+## Project Layout
+
+- `crates/iron-pony-core/`: core rendering and parsing behavior for the Rust port.
+- `crates/iron-pony-cli/`: CLI binary surface matching the user-facing command behavior.
+- `crates/iron-pony-spec/`: shared spec types and compatibility-focused models.
+- `crates/iron-pony-parity/`: parity harnesses for comparing against upstream behavior.
+- `crates/xtask/`: workspace automation and developer tooling tasks.
+- `crates/`: workspace member crates grouped by subsystem.
+- `tests/`: automated tests, fixtures, or parity scenarios.
+- `Cargo.toml`: crate or workspace manifest and the first place to check for package structure.
+
+## Setup And Requirements
+
+- Rust toolchain.
+- Any upstream reference binaries or assets needed for parity work.
+- Terminal environment suitable for the rendered output.
+
+## Build / Run / Test Commands
 
 ```bash
 cargo build --workspace
 cargo test --workspace
+cargo run -p iron-pony-cli -- --help
 ```
 
-## Run
+## Notes, Limitations, Or Known Gaps
 
-```bash
-cargo run -p iron-pony-cli -- -f twilight -b say "Hello from Iron Pony"
-```
+- Compatibility and determinism matter more here than adding unrelated new features.
+- Parity behavior should be treated as a first-class contract.
 
-When `-f/--pony` is omitted, `iron-pony` follows upstream selection flow:
-- use `best.pony` if present in configured pony paths
-- otherwise pick a random installed pony
+## Next Steps Or Roadmap Hints
 
-Think mode:
-
-```bash
-cargo run -p iron-pony-cli -- --think --wrap 22 -f twilight "Thinking in Rust"
-```
-
-Internal fortune mode:
-
-```bash
-cargo run -p iron-pony-cli -- --fortune --fortune-all --fortune-equal --seed 7
-```
-
-## Tracing / Logging
-
-Logging is built with `tracing` + `tracing-subscriber` across CLI/core/parity tooling.
-
-Logging is off by default.
-Use `--verbose` to enable logs.
-
-When `--verbose` is set, default filter is:
-- `info` globally
-- `debug` for `iron_pony_core`, `iron_pony_cli`, `iron_pony_parity`, and `xtask`
-
-## Parity Harness
-
-Run:
-
-```bash
-cargo run -p xtask -- parity
-```
-
-Environment overrides:
-- `PONYSAY_REF`: reference program (default: `ponysay`)
-- `IRON_PONY_BIN`: candidate binary path (otherwise harness uses `cargo run -p iron-pony-cli`)
-
-Current parity cases target installed system assets (for example `pinacolada` + `ascii`) so discovery paths are exercised directly.
-
-Outputs:
-- `target/parity/parity-report.json`
-- `target/parity/parity-report.md`
-- `target/parity/failures/<case_id>.diff`
-
-Case format supports:
-- `argv`
-- optional `reference_program`
-- optional `reference_argv`
-- optional `candidate_program`
-- optional `candidate_argv`
-- `stdin`
-- `env`
-- `features` (mapped to weighted requirements)
-
-## Notes on Upstream Compatibility
-
-Upstream `ponysay` behavior depends on installed pony assets, balloon styles, terminal mode, and environment.
-The parity harness is built to expose these mismatches quickly and make remaining work measurable.
-
-## License
-
-MIT (project code in this repo).
+- Keep broadening parity coverage as edge cases are discovered.
+- Use the spec/parity crates to prevent regression as internals evolve.
